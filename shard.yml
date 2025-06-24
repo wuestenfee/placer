@@ -1,0 +1,13 @@
+name: placer
+version: 0.1.0
+
+authors:
+  - wuestenfee <wuestenfee@wuestenfee.mozmail.com>
+
+dependencies:
+  termbox2:
+    github: homonoidian/termbox2.cr
+
+crystal: '>= 1.15.1'
+
+license: GPLv3
