@@ -5,8 +5,10 @@ authors:
   - wuestenfee <wuestenfee@wuestenfee.mozmail.com>
 
 dependencies:
-  termbox2:
-    github: homonoidian/termbox2.cr
+  termisu:
+    github: omarluq/termisu
+  uniwidth:
+    github: naqvis/uni_char_width
 
 crystal: '>= 1.15.1'
 
