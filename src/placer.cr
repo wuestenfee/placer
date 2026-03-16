@@ -1,4 +1,4 @@
-require "termbox2"
+require "termisu"
 require "./grid.cr"
 
 module Placer
@@ -21,61 +21,22 @@ module Placer
     abstract def end_drag(x : Int32, y : Int32)
   end
 
-  class Window
+  class Window < Termisu
     include Grid
 
-    def height
-      Termbox.height
-    end
-
-    def width
-      Termbox.width
-    end
-
-    def print(x, y, object, fg : Termbox::Attribute = Termbox::Color::Default, bg : Termbox::Attribute = Termbox::Color::Default)
-      Termbox.print(x, y, fg, bg, object) if @big_enough
-    end
-
-    def peek?(timeout : Time::Span) : Termbox::Event::KeyEvent?
-      peek?(timeout.total_milliseconds)
-    end
-
-    def peek?(timeout = -1) : Termbox::Event::KeyEvent?
-      loop do
-        case event = Termbox.peek? timeout
-        when Termbox::Event::KeyEvent?
-          return event unless event.try &.char == 'M'
-        when Termbox::Event::ResizeEvent
-          refresh
-        when Termbox::Event::MouseEvent
-          clicked = @children.find { |_, child|
-            event.x >= child.x &&
-              event.y >= child.y &&
-              event.x < child.x + child.width &&
-              event.y < child.y + child.height
-          }
-
-          return unless clicked
-
-          widget, child = clicked
-
-          if widget.is_a? Scrollable
-            if event.button == Termbox::MouseButton::WheelDown
-              widget.scroll_down(event.x - child.x, event.y - child.y)
-            end
-            if event.button == Termbox::MouseButton::WheelUp
-              widget.scroll_up(event.x - child.x, event.y - child.y)
-            end
-          end
-        end
+    def print(x, y, object, fg : Termisu::Color = Termisu::Color::Default, bg : Termisu::Color = Termisu::Color::Default)
+      object.each_grapheme do |grapheme|
+        grapheme = grapheme.to_s
+        set_cell(x, y, grapheme, fg, bg)
+        x += 1
       end
     end
 
     def refresh
       resize
-      Termbox.clear
+      clear
       draw_children
-      Termbox.present
+      sync
     end
   end
 
@@ -85,15 +46,11 @@ module Placer
     def initialize(@parent)
     end
 
-    def height
-      @parent.height self
+    def size
+      @parent.size self
     end
 
-    def width
-      @parent.width self
-    end
-
-    def print(x, y, object, fg : Termbox::Attribute = Termbox::Color::Default, bg : Termbox::Attribute = Termbox::Color::Default)
+    def print(x, y, object, fg : Termisu::Color = Termisu::Color::Default, bg : Termisu::Color = Termisu::Color::Default)
       @parent.print(self, x, y, object, fg, bg)
     end
 
@@ -118,12 +75,12 @@ module Placer
     end
 
     def resize
+      width, height = size
       super width - 2, height - 2, 1, 1
     end
 
     def draw
-      width = width()
-      height = height()
+      width, height = size
 
       text =
         if width - 2 < @label.size
@@ -149,6 +106,7 @@ module Placer
 
   class Divider < Widget
     def draw
+      width, height = size
       print(2, 2, "─" * (width - 4))
     end
   end
@@ -163,6 +121,7 @@ module Placer
     end
 
     def draw
+      width, height = size
       @start = @start.clamp(0, Math.max(0, @lines.size - height))
 
       @lines[@start...(@start + Math.min(@lines.size, height))].each_with_index do |line, i|
@@ -173,13 +132,11 @@ module Placer
     def scroll_up(x : Int32, y : Int32)
       @start -= 1
       draw
-      Termbox.present
     end
 
     def scroll_down(x : Int32, y : Int32)
       @start += 1
       draw
-      Termbox.present
     end
   end
 end

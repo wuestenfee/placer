@@ -1,9 +1,10 @@
 require "../src/placer.cr"
-require "termbox2"
 
 module Placer
   class Corners < Widget
     def draw
+      width, height = size
+
       print(0, 0, "a")
       print(width - 1, 0, "b")
       print(0, height - 1, "c")
@@ -14,34 +15,34 @@ end
 
 license = File.read_lines(__DIR__ + "/../LICENSE")
 
+win = Placer::Window.new
+
 begin
-  Termbox.enable
-  Termbox.set_input_mode(Termbox::InputMode::Escape | Termbox::InputMode::Mouse)
-  Termbox.set_output_mode(Termbox::OutputMode::M256)
+  corners = Placer::Corners.new win
+  win[0, 0] = corners
 
-  win = Placer::Window.new
+  win[1, 0...2] = Placer::Pager.new win, license
 
-  win[0, 0] = Placer::Corners.new win
-  win[1, 1] = Placer::Pager.new win, license
-
-  win[0, 1] = label_frame = Placer::LabelFrame.new win, "Awesome Label Frame"
+  win[0, 1] = label_frame = Placer::LabelFrame.new win, "Label Frame"
 
   label_frame[0, 0] = Placer::Corners.new label_frame
   label_frame[1, 1] = Placer::Corners.new label_frame
+  # label_frame[0, 1] = Placer::Pager.new win, license
 
-  win.row_configure 0, max: 20
+  # win.row_configure 0, max: 20
 
-  win.column_configure 0, weight: 2, min: 15
-  win.column_configure 1, min: 30
+  # win.column_configure 0, weight: 2, min: 15
+  # win.column_configure 1, min: 30
 
   win.refresh
 
-  until event = win.peek?
+  win.each_event do |event|
+    if event.is_a? Termisu::Event::Resize
+      win.refresh
+    else
+      break
+    end
   end
-  Termbox.disable
-
-  # It seems we're abandoning `termbox2`, as for some reason `peek?` will return stray KeyEvents when scrolling in the pager.
-  pp event
 ensure
-  Termbox.disable
+  win.close
 end
