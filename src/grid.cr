@@ -38,6 +38,7 @@ module Placer
     getter columns = {} of Int32 => Dimension
     getter rows = {} of Int32 => Dimension
     getter? big_enough : Bool = true
+    getter? needs_resizing : Bool = true
 
     def size(child : Widget)
       @children[child].char_size
@@ -53,6 +54,7 @@ module Placer
     end
 
     abstract def size
+    # abstract def clear
 
     private def draw_children
       @children.each do |widget, _|
@@ -61,6 +63,8 @@ module Placer
     end
 
     def draw
+      resize
+      clear
       draw_children
     end
 
@@ -99,6 +103,8 @@ module Placer
       child.visible = visible
       child.sticky = sticky
       @children[widget] = child
+
+      @needs_resizing = true
     end
 
     def row_configure(
@@ -114,6 +120,8 @@ module Placer
       else
         @rows[index] = Dimension.new(weight || 1, min || 1, max)
       end
+
+      @needs_resizing = true
     end
 
     def column_configure(
@@ -129,6 +137,8 @@ module Placer
       else
         @columns[index] = Dimension.new(weight || 1, min || 1, max)
       end
+
+      @needs_resizing = true
     end
 
     def resize(
@@ -137,6 +147,8 @@ module Placer
       x_offset : Int32 = 0,
       y_offset : Int32 = 0,
     )
+      return unless @needs_resizing
+
       columns = @children.map(&.[1].position[0]).uniq!.sort!
       min_widths = columns.map { |column| @columns[column]?.try &.min || 1 }
       max_widths = columns.map { |column| @columns[column]?.try &.max || width }
@@ -203,6 +215,8 @@ module Placer
 
         widget.resize if widget.responds_to? :resize
       end
+
+      @needs_resizing = false
     end
   end
 end
