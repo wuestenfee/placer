@@ -1,14 +1,15 @@
+require "./container.cr"
+
 module Placer
   module Grid
-    class Child
-      property char_position : {Int32, Int32} = {0, 0}
-      property char_size : {Int32, Int32} = {0, 0}
+    include Container
+
+    class Child < Child
       property position : {UInt8, UInt8} = {0_u8, 0_u8}
       property size : {UInt8, UInt8} = {1_u8, 1_u8}
       property sticky : Direction = Direction::Center
       property padding : {UInt8, UInt8} = {0_u8, 0_u8}
       property inner_padding : {UInt8, UInt8} = {0_u8, 0_u8}
-      property? visible : Bool = true
     end
 
     class Dimension
@@ -34,39 +35,9 @@ module Placer
       EastWest
     end
 
-    getter children : Hash(Widget, Child) = {} of Widget => Child
+    @children = {} of Widget => Child
     getter columns = {} of Int32 => Dimension
     getter rows = {} of Int32 => Dimension
-    getter? big_enough : Bool = true
-    getter? needs_resizing : Bool = true
-
-    def size(child : Widget)
-      @children[child].char_size
-    end
-
-    def print(
-      child : Widget, x, y, object,
-      fg : Termisu::Color = Termisu::Color::Default,
-      bg : Termisu::Color = Termisu::Color::Default,
-    )
-      child_x, child_y = @children[child].char_position
-      print(child_x + x, child_y + y, object, fg, bg)
-    end
-
-    abstract def size
-    # abstract def clear
-
-    private def draw_children
-      @children.each do |widget, _|
-        widget.draw
-      end
-    end
-
-    def draw
-      resize
-      clear
-      draw_children
-    end
 
     def []=(
       x : Int | Range(Int, Int),
@@ -147,8 +118,6 @@ module Placer
       x_offset : Int32 = 0,
       y_offset : Int32 = 0,
     )
-      return unless @needs_resizing
-
       columns = @children.map(&.[1].position[0]).uniq!.sort!
       min_widths = columns.map { |column| @columns[column]?.try &.min || 1 }
       max_widths = columns.map { |column| @columns[column]?.try &.max || width }

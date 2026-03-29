@@ -1,3 +1,6 @@
+require "termisu"
+require "./grid"
+
 module Placer
   class Window < Termisu
     include Grid
@@ -9,6 +12,7 @@ module Placer
       # end
 
       @terminal.unbuffered_write(x, y, object)
+      @terminal.flush
     end
 
     def draw
@@ -36,7 +40,7 @@ module Placer
 
           widget, child = clicked
           x, y = child.char_position
-          width, height = child.char_size
+          # width, height = child.char_size
 
           case widget
           when Scrollable

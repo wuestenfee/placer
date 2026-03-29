@@ -1,3 +1,5 @@
+require "../frame"
+
 module Placer
   class LabelFrame < Frame
     property label : String
@@ -22,8 +24,7 @@ module Placer
           @label
         end
 
-      print 0, 0, "┌#{"─" * (width - 2)}┐"
-      print 1, 0, text
+      print 0, 0, "┌#{text + "─" * (width - 2 - text.size)}┐"
       print 0, height - 1, "└#{"─" * (width - 2)}┘"
 
       (height - 2).times do |i|

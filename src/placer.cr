@@ -1,7 +1,6 @@
-require "termisu"
-
 module Placer
   VERSION = "0.1.0"
+  LOG = Log.for("placer")
 
   module Clickable
     abstract def left_click(x : Int32, y : Int32)
@@ -21,7 +20,5 @@ module Placer
   end
 end
 
-require "./grid.cr"
-require "./window.cr"
-require "./widget.cr"
-require "./frame.cr"
+require "./window"
+require "./widget/*"

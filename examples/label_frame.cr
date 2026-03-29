@@ -1,4 +1,4 @@
-require "../src/placer.cr"
+require "../src/placer"
 
 license = File.read_lines(__DIR__ + "/../LICENSE")
 
