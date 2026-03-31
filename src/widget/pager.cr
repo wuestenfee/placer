@@ -2,8 +2,6 @@ module Placer
   class Pager < Widget
     include Scrollable
 
-    LOG = Log.for("placer.pager")
-
     property lines : Array(String)
     getter start = 0
     @mu : Mutex = Mutex.new
@@ -33,17 +31,13 @@ module Placer
 
     def scroll_up(x : Int32 = 0, y : Int32 = 0)
       @mu.synchronize do
-        LOG.debug { "scrolling up" }
         self.start = @start - 1
-        LOG.debug { "scrolled up" }
       end
     end
 
     def scroll_down(x : Int32 = 0, y : Int32 = 0)
       @mu.synchronize do
-        LOG.debug { "scrolling down" }
         self.start = @start + 1
-        LOG.debug { "scrolled down" }
       end
     end
   end

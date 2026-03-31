@@ -1,6 +1,6 @@
 module Placer
   VERSION = "0.1.0"
-  LOG = Log.for("placer")
+  Log     = ::Log.for("placer")
 
   module Clickable
     abstract def left_click(x : Int32, y : Int32)

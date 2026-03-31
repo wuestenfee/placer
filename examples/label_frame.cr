@@ -1,4 +1,7 @@
 require "../src/placer"
+require "log"
+
+Log.setup(:debug, Log::IOBackend.new(File.new("./label_frame.log", "a+")))
 
 license = File.read_lines(__DIR__ + "/../LICENSE")
 

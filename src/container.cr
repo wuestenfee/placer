@@ -69,7 +69,6 @@ module Placer
     end
 
     private def draw_children
-      LOG.debug { "drawing children" }
       @children.each do |widget, child|
         widget.draw if child.visible?
       end
