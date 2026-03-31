@@ -28,13 +28,18 @@ module Placer
       print(child_x + x, child_y + y, object, fg, bg)
     end
 
-    def []=(title, widget)
+    def []=(title, widget : Widget, active : Bool = false)
       child = Child.new
       width, height = size
       child.char_position = {0, 2}
       child.char_size = {width, height - 2}
       child.title = title
-      child.visible = @children.empty?
+      if @children.empty?
+        child.visible = true
+      elsif active
+        active_tab?.try &.[1].visible = false
+        child.visible = true
+      end
       @children[widget] = child
       widget.parent = self
     end
