@@ -8,7 +8,7 @@ module Placer
     getter start = 0
     @mu : Mutex = Mutex.new
 
-    def initialize(@parent, @lines = [] of String)
+    def initialize(@lines = [] of String)
     end
 
     def draw

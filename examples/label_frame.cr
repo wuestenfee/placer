@@ -6,15 +6,15 @@ win = Placer::Window.new
 
 begin
   win.enable_mouse
-  corners = Placer::Corners.new win
+  corners = Placer::Corners.new
   win[0, 0] = corners
 
-  win[1, 0...2] = pager = Placer::Pager.new win, license
+  win[1, 0...2] = pager = Placer::Pager.new license
 
-  win[0, 1] = label_frame = Placer::LabelFrame.new win, "Label Frame"
+  win[0, 1] = label_frame = Placer::LabelFrame.new "Label Frame"
 
-  label_frame[0, 0] = Placer::Corners.new label_frame
-  label_frame[1, 1] = Placer::Corners.new label_frame
+  label_frame[0, 0] = Placer::Corners.new
+  label_frame[1, 1] = Placer::Corners.new
 
   win.row_configure 0, max: 20
 

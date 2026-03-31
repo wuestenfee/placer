@@ -36,6 +36,7 @@ module Placer
       child.title = title
       child.visible = @children.empty?
       @children[widget] = child
+      widget.parent = self
     end
 
     def [](title : String) : {Widget, Child}?

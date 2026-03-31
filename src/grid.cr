@@ -74,6 +74,7 @@ module Placer
       child.visible = visible
       child.sticky = sticky
       @children[widget] = child
+      widget.parent = self
 
       @needs_resizing = true
     end

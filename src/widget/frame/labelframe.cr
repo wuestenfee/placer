@@ -4,7 +4,7 @@ module Placer
   class LabelFrame < Frame
     property label : String
 
-    def initialize(@parent, @label)
+    def initialize(@label)
     end
 
     def resize

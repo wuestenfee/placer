@@ -3,13 +3,15 @@ module Placer
   end
 
   abstract class Widget
-    getter parent : Container
+    getter parent : Container?
 
-    def initialize(@parent)
+    def parent=(parent : Container)
+      raise "#{self} already has a parent" if @parent
+      @parent = parent
     end
 
     def size
-      @parent.size self
+      @parent.as(Container).size self
     end
 
     def print(
@@ -17,7 +19,7 @@ module Placer
       fg : Termisu::Color = Termisu::Color::Default,
       bg : Termisu::Color = Termisu::Color::Default,
     )
-      @parent.print(self, x, y, object, fg, bg)
+      @parent.as(Container).print(self, x, y, object, fg, bg)
     end
 
     abstract def draw
