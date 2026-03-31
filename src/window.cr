@@ -24,6 +24,8 @@ module Placer
       super do |event|
         case event
         when Termisu::Event::Resize
+          @needs_resizing = true
+          clear
           draw
         when Termisu::Event::Mouse
           clicked = @children.find do |_, child|

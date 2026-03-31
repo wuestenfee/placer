@@ -9,7 +9,6 @@ module Placer
     @children = {} of Widget => Tabination::Child
 
     def draw
-      clear
       print(2, 0, "this the tabination: " + @children.each_value.map { |child| child.visible? ? "<#{child.title}>" : child.title }.join(" | "))
       print(2, 1, "─" * (size[0] - 4))
       draw_children
@@ -55,6 +54,7 @@ module Placer
     def active_tab=(widget : Widget)
       active_tab?.try &.[1].visible = false
       @children[widget].visible = true
+      clear
       draw
     end
 

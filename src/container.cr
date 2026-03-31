@@ -77,7 +77,6 @@ module Placer
 
     def draw
       resize if @needs_resizing
-      clear
       draw_children
     end
 
